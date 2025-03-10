@@ -1,15 +1,20 @@
+require('dotenv').config()
 //Request an access token to proceed with making the api calls
 const axios = require('axios')
 //
 const tokenGenerator = async()=>{
     try{
+        const tokenURL = process.env.TOKENURL
+        const username = process.env.APIUSER
+        const passwd = process.env.APISECRET
+        //        
         const response = await axios.post(
-            'https://uat.buni.kcbgroup.com/token?grant_type=client_credentials',
+            `${tokenURL}`,
              null,
             {
                 auth:{
-                    username: 'GAoy_DqGV_e9fHQQJJQJtC3jMS0a',
-                    password: 'AkahG0GZlcfm8ezBxqVaks3RMw8a'
+                    username: `${username}`,
+                    password: `${passwd}`
                 },
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -19,22 +24,25 @@ const tokenGenerator = async()=>{
        return response.data
         
     }catch(error){
-        console.error(error.message);
         throw error
     }
 }
 const stkPush = async()=>{
+    const accRef = process.env.ACCREF
+    const stkUrl = process.env.STKURL
+    const callbackUrl = process.env.CALLBACKURL
+    //
     return await tokenGenerator().then(res=>
-        axios.post('https://uat.buni.kcbgroup.com/mm/api/request/1.0.0/stkpush',
+        axios.post(`${stkUrl}`,
         {
             "phoneNumber": "254700123456",
             "amount": "1",
-            "invoiceNumber": "KCBTILLNO-YOURACCREF",
+            "invoiceNumber": `KCBTILLNO-${accRef}`,
             "sharedShortCode": true,
             "orgShortCode": "",
             "orgPassKey": "",
-            "callbackUrl": "https://posthere.io/f613-4b7f-b82b",
-            "transactionDescription": "school fee payment" 
+            "callbackUrl": `${callbackUrl}`,
+            "transactionDescription": "Subscription payment" 
         },
         {
             headers: {
